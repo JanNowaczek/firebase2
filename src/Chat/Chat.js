@@ -48,6 +48,10 @@ class Chat extends React.Component {
         )
     }
 
+    componentWillUnmount(){
+        messagesRef.off()
+    }
+
     render() {
         return (
             <div>
