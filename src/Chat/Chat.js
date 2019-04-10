@@ -6,6 +6,8 @@ import { database } from '../firebaseConf'
 
 moment.locale('pl')
 
+const messagesRef = database.ref('/JFDDL7/messages')
+
 class Chat extends React.Component {
     state = {
         messages: null,
@@ -13,15 +15,14 @@ class Chat extends React.Component {
     }
 
     componentDidMount() {
-        database.ref('/JFDDL7/messages')
-            .on(
-                'value',
-                (snapshot) => {
-                    this.setState({
-                        messages: snapshot.val(),
-                    })
-                }
-            )
+        messagesRef.on(
+            'value',
+            (snapshot) => {
+                this.setState({
+                    messages: snapshot.val(),
+                })
+            }
+        )
     }
 
     onNewMessageTextChange = event => this.setState({
@@ -32,19 +33,20 @@ class Chat extends React.Component {
         const newMessage = {
             text: this.state.newMessageText,
             date: Date.now(),
-            author: 'Jasiek Nowaczek',
+            author: 'Mateusz Choma',
         }
-        fetch('https://ad-snadbox.firebaseio.com/JFDDL7/messages.json',
+
+        messagesRef.push(newMessage)
+    }
+
+    onDeleteMessageClick = (key) => {
+        fetch(
+            'https://ad-snadbox.firebaseio.com/JFDDL7/messages/' + key + '.json',
             {
-                method: 'POST',
-                body: JSON.stringify(newMessage)
+                method: 'DELETE',
             }
         )
     }
-
-
-
-
 
     render() {
         return (
@@ -58,7 +60,7 @@ class Chat extends React.Component {
                         onClick={this.onSendClick}
                     >
                         WYŚLIJ!
-              </button>
+          </button>
                 </div>
                 {
                     this.state.messages &&
@@ -67,6 +69,7 @@ class Chat extends React.Component {
                             ([key, message]) => (
                                 <div
                                     key={key}
+                                    onClick={() => this.onDeleteMessageClick(key)}
                                 >
                                     <div>
                                         <b>{message.author}</b>
@@ -85,5 +88,4 @@ class Chat extends React.Component {
         )
     }
 }
-
 export default Chat
