@@ -1,28 +1,46 @@
 import React from 'react'
+import moment from 'moment'
+import 'moment/locale/pl'
 
 import { database } from '../firebaseConf'
 
-class Chat extends React.Component{
+moment.locale('pl')
+
+class Chat extends React.Component {
     state = {
         messages: null,
     }
 
-    componentDidMount(){
+    componentDidMount() {
         database.ref('/JFDDL7/messages')
-        .on(
-            'value',
-            (snapshot) => {
-                this.setState({
-                    messages: snapshot.val(),
-                })
-            } 
-        )
+            .on(
+                'value',
+                (snapshot) => {
+                    this.setState({
+                        messages: snapshot.val(),
+                    })
+                }
+            )
     }
 
-    render(){
-        return(
+    render() {
+        return (
             <div>
-
+                {
+                    this.state.messages &&
+                    Object.entries(this.state.messages)
+                        .map(
+                            ([key, message]) => (
+                                <div
+                                    key={key}
+                                >
+                                    {moment(message.date).fromNow()}
+                                    |
+                                    {message.text}
+                                </div>
+                            )
+                        )
+                }
             </div>
         )
     }
