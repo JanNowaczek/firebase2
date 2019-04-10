@@ -33,7 +33,7 @@ class Chat extends React.Component {
         const newMessage = {
             text: this.state.newMessageText,
             date: Date.now(),
-            author: 'Mateusz Choma',
+            author: 'Jasiek Nowaczek',
         }
 
         messagesRef.push(newMessage)
